@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-
-export interface EditableItem {
-  type: 'folder' | 'item';
-  data: any;
-}
+import { EditableItem } from '../interfaces/EditableItem';
 
 @Injectable({
   providedIn: 'root',

@@ -11,24 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatSliderModule } from '@angular/material/slider';
-import { EditorService } from '../editor.service';
-
-export interface FolderData {
-  key: string;
-  name: string;
-  icon: string;
-  selector: string;
-  description: string;
-  items: Item[];
-}
-
-export interface Item {
-  id: string;
-  name: string;
-  icon: string;
-  selector: string;
-  description: string;
-}
+import { EditorService } from '../../services/editor.service';
+import { FolderData, Item } from '../../interfaces/FolderData';
 
 @Component({
   selector: 'app-menu',
