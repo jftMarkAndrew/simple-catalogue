@@ -41,37 +41,41 @@
         [attr.id]="'accordion-body-' + folder.key"
         [attr.aria-labelledby]="'accordion-header-' + folder.key"
       >
-        <div
-          cdkDropList
-          [cdkDropListData]="folder.items"
-          [class]="folder.items.length > 0 ? 'example-list' : ''"
-          (cdkDropListDropped)="dropItem($event, folder)"
-        >
-          @for (item of folder.items; track item.id) {
-          <div class="example-box" cdkDrag [style.background]="item.selector">
-            <div class="item-custom-placeholder" *cdkDragPlaceholder></div>
-            <button class="gap-icon small-icon" mat-icon-button>
-              <mat-icon>{{ item.icon }}</mat-icon>
-            </button>
-            <div class="folder-toggle">
-              <span>{{ item.name }}</span>
+        <div class="items-container" cdkScrollable>
+          <div
+            cdkDropList
+            cdkDropListAutoScroll
+            cdkDropListAutoScrollStep="12"
+            [cdkDropListData]="folder.items"
+            [class]="folder.items.length > 0 ? 'example-list' : ''"
+            (cdkDropListDropped)="dropItem($event, folder)"
+          >
+            @for (item of folder.items; track item.id) {
+            <div class="example-box" cdkDrag [style.background]="item.selector">
+              <div class="item-custom-placeholder" *cdkDragPlaceholder></div>
+              <button class="gap-icon small-icon" mat-icon-button>
+                <mat-icon>{{ item.icon }}</mat-icon>
+              </button>
+              <div class="folder-toggle">
+                <span>{{ item.name }}</span>
+              </div>
+              <button
+                class="small-icon"
+                mat-icon-button
+                (click)="selectItem('item', item)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                class="small-icon"
+                mat-icon-button
+                (click)="deleteItem('item', item, folder)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
             </div>
-            <button
-              class="small-icon"
-              mat-icon-button
-              (click)="selectItem('item', item)"
-            >
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              class="small-icon"
-              mat-icon-button
-              (click)="deleteItem('item', item, folder)"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
+            }
           </div>
-          }
         </div>
         <div class="add-folders-or-items add-items">
           <button mat-icon-button (click)="createItems(folder)">

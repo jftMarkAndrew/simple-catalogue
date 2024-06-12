@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { MatSliderModule } from '@angular/material/slider';
 import { EditorService } from '../../services/editor.service';
 import { FolderData, Item } from '../../interfaces/FolderData';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-menu',
@@ -26,6 +27,7 @@ import { FolderData, Item } from '../../interfaces/FolderData';
     MatIconModule,
     FormsModule,
     MatSliderModule,
+    ScrollingModule,
   ],
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
