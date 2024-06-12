@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EditorService } from '../../services/editor.service';
@@ -7,6 +7,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-editor',
@@ -23,7 +25,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent {
+export class EditorComponent implements OnDestroy {
+  private unsubscribe$ = new Subject<void>();
+
   selectedItem$ = this.editorService.selectedItem$;
   name = '';
   description = '';
@@ -55,7 +59,7 @@ export class EditorComponent {
   ];
 
   constructor(private editorService: EditorService) {
-    this.selectedItem$.subscribe((item) => {
+    this.selectedItem$.pipe(takeUntil(this.unsubscribe$)).subscribe((item) => {
       if (item) {
         this.name = item.data.name;
         this.description = item.data.description;
@@ -86,5 +90,10 @@ export class EditorComponent {
       icon: this.icon,
       selector: this.selector,
     });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }
