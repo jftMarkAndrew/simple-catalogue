@@ -136,10 +136,16 @@ export class MenuComponent {
       this.folders = this.folders.filter(
         (folder) => folder.key !== (item as FolderData).key
       );
+      if (this.editorService.getSelectedItem()?.data === item) {
+        this.editorService.selectItem(null);
+      }
     } else if (type === 'item' && parentFolder) {
       parentFolder.items = parentFolder.items.filter(
         (i) => i.id !== (item as Item).id
       );
+      if (this.editorService.getSelectedItem()?.data === item) {
+        this.editorService.selectItem(null);
+      }
     }
   }
 }

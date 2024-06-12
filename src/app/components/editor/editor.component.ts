@@ -67,6 +67,13 @@ export class EditorComponent implements OnDestroy {
         this.selector = item.data.selector;
         this.chosenIcon = item.data.icon;
         this.chosenSelector = item.data.selector;
+      } else {
+        this.name = '';
+        this.description = '';
+        this.icon = '';
+        this.selector = '';
+        this.chosenIcon = '';
+        this.chosenSelector = '';
       }
     });
   }

@@ -9,8 +9,12 @@ export class EditorService {
   private selectedItemSubject = new BehaviorSubject<EditableItem | null>(null);
   selectedItem$ = this.selectedItemSubject.asObservable();
 
-  selectItem(item: EditableItem) {
+  selectItem(item: EditableItem | null) {
     this.selectedItemSubject.next(item);
+  }
+
+  getSelectedItem(): EditableItem | null {
+    return this.selectedItemSubject.getValue();
   }
 
   updateItem(
