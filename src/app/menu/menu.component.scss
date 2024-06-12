@@ -1,0 +1,151 @@
+.title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+/* dnd */
+
+.example-list {
+  padding: 0 24px;
+  min-height: 49px;
+  display: block;
+  overflow: hidden;
+}
+
+.example-box {
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  background-color: white;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  cursor: move;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-box:last-child {
+  border: none;
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.folder-custom-placeholder {
+  margin-bottom: 8px;
+  background: #ccc;
+  border: dotted 2px #161616;
+  min-height: 54px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.item-custom-placeholder {
+  margin-bottom: 8px;
+  background: #ccc;
+  border: dotted 2px #161616;
+  min-height: 44px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* accordion */
+
+.example-accordion {
+  display: block;
+  margin-bottom: 8px;
+  background-color: #f1f2f7;
+  border-radius: 4px;
+}
+
+.example-accordion-item {
+  display: block;
+  border: solid 1px #f1f2f7;
+}
+
+.example-accordion-item + .example-accordion-item {
+  border-top: none;
+}
+
+.example-accordion-item-header {
+  padding: 8px;
+  display: flex;
+  align-content: center;
+}
+
+.example-accordion-item-description {
+  font-size: 0.85em;
+}
+
+.example-accordion-item-header:hover {
+  cursor: pointer;
+}
+
+.example-accordion-item:first-child {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.example-accordion-item:last-child {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+/* add */
+
+.add-folders-or-items {
+  margin: 12px 0 12px 9px;
+  display: flex;
+  align-items: center;
+}
+
+.add-items {
+  margin-left: 28px;
+}
+
+input {
+  margin-right: 6px;
+  width: 36px;
+  height: 36px;
+  text-align: center;
+}
+
+/* toggle */
+
+.folder-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.gap-icon {
+  margin-right: 6px !important;
+}
+
+.small-icon {
+  transform: scale(0.75);
+  margin: -4px;
+}
+
+span {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.name-folder {
+  font-size: 16px;
+  font-weight: 500;
+}

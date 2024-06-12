@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  padding: 24px;
+  gap: 24px;
+}
+
+.left-panel {
+  min-width: 420px;
+  padding: 24px;
+  color: #161616;
+  background-color: white;
+  border-radius: 4px;
+}
+
+.right-panel {
+  width: 100%;
+  padding: 24px;
+  color: #161616;
+  background-color: white;
+  border-radius: 4px;
+}
+
+@media (max-width: 960px) {
+  .container {
+    flex-direction: column;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .left-panel,
+  .right-panel {
+    padding: 12px;
+    min-width: calc(100% - 24px);
+    width: calc(100% - 24px);
+  }
+}

@@ -1,0 +1,53 @@
+.editor-placeholder {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 500;
+  opacity: 0.5;
+}
+
+.editor {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.icon-selector,
+.color-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.icon-item,
+.color-item {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #16161616;
+}
+
+.selected {
+  border-color: #161616;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+textarea {
+  min-height: 180px;
+}

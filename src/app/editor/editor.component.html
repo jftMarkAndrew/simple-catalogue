@@ -1,0 +1,57 @@
+@if (selectedItem$ | async; as selectedItem) {
+<div class="editor">
+  <span class="title">Edit {{ selectedItem.type }}</span>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input
+      matInput
+      id="name"
+      [(ngModel)]="name"
+      name="name"
+      (ngModelChange)="save()"
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Description</mat-label>
+    <textarea
+      matInput
+      id="description"
+      [(ngModel)]="description"
+      name="description"
+      (ngModelChange)="save()"
+    ></textarea>
+  </mat-form-field>
+
+  <label for="icon" class="title">Icon</label>
+  <div class="icon-selector">
+    @for (icon of icons; track icon) {
+    <div
+      class="icon-item"
+      [ngClass]="{ selected: icon === chosenIcon }"
+      (click)="selectIcon(icon)"
+    >
+      <mat-icon>{{ icon }}</mat-icon>
+    </div>
+    }
+  </div>
+
+  <label for="selector" class="title">Selector</label>
+  <div class="color-selector">
+    @for (selector of selectors; track selector) {
+    <div
+      class="color-item"
+      [ngClass]="{ selected: selector === chosenSelector }"
+      [style.background-color]="selector"
+      (click)="selectColor(selector)"
+    ></div>
+    }
+  </div>
+  @if (selectedItem.type === 'folder') {
+  <div></div>
+  }
+</div>
+} @else {
+<div class="editor-placeholder">Select an item or folder to edit</div>
+}

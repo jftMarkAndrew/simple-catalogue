@@ -1,0 +1,105 @@
+<div class="title">Menu</div>
+<div
+  cdkDropList
+  [cdkDropListData]="folders"
+  (cdkDropListDropped)="dropFolder($event)"
+>
+  @for (folder of folders; track folder.key) {
+  <div class="example-accordion" [style.background]="folder.selector" cdkDrag>
+    <div class="folder-custom-placeholder" *cdkDragPlaceholder></div>
+    <cdk-accordion-item
+      #accordionItem="cdkAccordionItem"
+      class="example-accordion-item"
+      [style.background]="folder.selector"
+      [style.borderColor]="folder.selector"
+      role="button"
+      tabindex="0"
+      [attr.id]="'accordion-header-' + folder.key"
+      [attr.aria-expanded]="!!accordionItem.expanded"
+      [attr.aria-controls]="'accordion-body-' + folder.key"
+    >
+      <div class="example-accordion-item-header">
+        <div class="folder-toggle" (click)="accordionItem.toggle()">
+          <button class="gap-icon" mat-icon-button>
+            <mat-icon>{{ folder.icon }}</mat-icon>
+          </button>
+          <span class="name-folder">{{ folder.name }}</span>
+        </div>
+        <button mat-icon-button (click)="selectItem('folder', folder)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="deleteItem('folder', folder)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+      <div
+        class="example-accordion-item-body"
+        role="region"
+        [style.display]="accordionItem.expanded ? '' : 'none'"
+        [attr.id]="'accordion-body-' + folder.key"
+        [attr.aria-labelledby]="'accordion-header-' + folder.key"
+      >
+        <div
+          cdkDropList
+          [cdkDropListData]="folder.items"
+          [class]="folder.items.length > 0 ? 'example-list' : ''"
+          (cdkDropListDropped)="dropItem($event, folder)"
+        >
+          @for (item of folder.items; track item.id) {
+          <div class="example-box" cdkDrag [style.background]="item.selector">
+            <div class="item-custom-placeholder" *cdkDragPlaceholder></div>
+            <button class="gap-icon small-icon" mat-icon-button>
+              <mat-icon>{{ item.icon }}</mat-icon>
+            </button>
+            <div class="folder-toggle">
+              <span>{{ item.name }}</span>
+            </div>
+            <button
+              class="small-icon"
+              mat-icon-button
+              (click)="selectItem('item', item)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              class="small-icon"
+              mat-icon-button
+              (click)="deleteItem('item', item, folder)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          }
+        </div>
+        <div class="add-folders-or-items add-items">
+          <button mat-icon-button (click)="createItems(folder)">
+            <mat-icon>add_circle</mat-icon>
+          </button>
+          <input
+            type="number"
+            id="itemCount"
+            [(ngModel)]="itemCount"
+            min="1"
+            max="50"
+          />
+          <span>Items</span>
+        </div>
+      </div>
+    </cdk-accordion-item>
+  </div>
+  }
+</div>
+
+<div class="add-folders-or-items">
+  <button mat-icon-button (click)="createFolders()">
+    <mat-icon>add_circle</mat-icon>
+  </button>
+  <input
+    type="number"
+    id="folderCount"
+    [(ngModel)]="folderCount"
+    min="1"
+    max="50"
+  />
+  <span>Folders</span>
+</div>
