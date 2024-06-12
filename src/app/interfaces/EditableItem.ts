@@ -1,4 +1,6 @@
+import { FolderData, Item } from './FolderData';
+
 export interface EditableItem {
   type: 'folder' | 'item';
-  data: any;
+  data: FolderData | Item;
 }
