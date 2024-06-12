@@ -123,15 +123,23 @@ export class MenuComponent {
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
   }
 
-  selectItem(type: 'folder' | 'item', data: any) {
+  selectItem(type: 'folder' | 'item', data: FolderData | Item) {
     this.editorService.selectItem({ type, data });
   }
 
-  deleteItem(type: 'folder' | 'item', item: any, parentFolder?: FolderData) {
+  deleteItem(
+    type: 'folder' | 'item',
+    item: FolderData | Item,
+    parentFolder?: FolderData
+  ) {
     if (type === 'folder') {
-      this.folders = this.folders.filter((folder) => folder.key !== item.key);
+      this.folders = this.folders.filter(
+        (folder) => folder.key !== (item as FolderData).key
+      );
     } else if (type === 'item' && parentFolder) {
-      parentFolder.items = parentFolder.items.filter((i) => i.id !== item.id);
+      parentFolder.items = parentFolder.items.filter(
+        (i) => i.id !== (item as Item).id
+      );
     }
   }
 }
