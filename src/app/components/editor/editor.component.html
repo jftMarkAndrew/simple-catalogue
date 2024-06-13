@@ -2,7 +2,7 @@
 <div class="editor">
   <span class="title">Edit {{ selectedItem.type }}</span>
 
-  <form [formGroup]="form">
+  <form class="form-container" [formGroup]="form">
     <mat-form-field appearance="fill">
       <mat-label>Name</mat-label>
       <input matInput id="name" formControlName="name" />
