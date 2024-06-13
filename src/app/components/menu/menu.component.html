@@ -20,7 +20,7 @@
       [attr.aria-expanded]="!!accordionItem.expanded"
       [attr.aria-controls]="'accordion-body-' + folder.key"
     >
-      <div class="example-accordion-item-header">
+      <div class="example-accordion-item-header" cdkDragHandle>
         <div class="folder-toggle" (click)="accordionItem.toggle()">
           <button class="gap-icon" mat-icon-button>
             <mat-icon>{{ folder.icon }}</mat-icon>

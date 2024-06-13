@@ -2,6 +2,7 @@ import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import {
   CdkDrag,
   CdkDragDrop,
+  CdkDragHandle,
   CdkDragPlaceholder,
   CdkDropList,
   moveItemInArray,
@@ -23,6 +24,7 @@ import { isPlatformBrowser } from '@angular/common';
   imports: [
     CdkDropList,
     CdkDrag,
+    CdkDragHandle,
     CdkDragPlaceholder,
     CdkAccordionModule,
     MatButtonModule,
