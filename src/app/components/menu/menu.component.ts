@@ -162,13 +162,11 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   createFolders() {
     const folderCount = this.folderCount.value;
-    if (folderCount === 0) return;
     this.folderService.createFolders(folderCount);
   }
 
   createItems(folder: FolderData) {
     const itemCount = this.itemCount.value;
-    if (itemCount === 0) return;
     this.folderService.createItems(folder, itemCount);
   }
 
