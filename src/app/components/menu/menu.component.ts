@@ -13,7 +13,6 @@ import {
   CdkDragHandle,
   CdkDragPlaceholder,
   CdkDropList,
-  moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
 import { MatButtonModule } from '@angular/material/button';
