@@ -1,4 +1,10 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  Inject,
+  PLATFORM_ID,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import {
   CdkDrag,
   CdkDragDrop,
@@ -36,7 +42,7 @@ import { isPlatformBrowser } from '@angular/common';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   folders: FolderData[] = [];
@@ -112,7 +118,7 @@ export class MenuComponent {
 
   createFolders() {
     if (this.folderCount < 1) this.folderCount = 1;
-    if (this.folderCount > 50) this.folderCount = 50;
+    if (this.folderCount > 5000) this.folderCount = 5000;
 
     const newFolders: FolderData[] = Array.from(
       { length: this.folderCount },
@@ -126,12 +132,13 @@ export class MenuComponent {
         items: [],
       })
     );
-    this.folders = [...this.folders, ...newFolders];
+
+    this.addItemsInBatches(newFolders, this.folders);
   }
 
   createItems(folder: FolderData) {
     if (this.itemCount < 1) this.itemCount = 1;
-    if (this.itemCount > 50) this.itemCount = 50;
+    if (this.itemCount > 5000) this.itemCount = 5000;
 
     const newItems: Item[] = Array.from({ length: this.itemCount }, () => ({
       id: this.generateUniqueId(),
@@ -140,7 +147,33 @@ export class MenuComponent {
       selector: 'white',
       description: '',
     }));
-    folder.items = [...folder.items, ...newItems];
+
+    this.addItemsInBatches(newItems, folder.items);
+  }
+
+  private addItemsInBatches<T>(newItems: T[], targetArray: T[]) {
+    const batchSize = 100;
+    let index = 0;
+
+    const addBatch = () => {
+      if (index < newItems.length) {
+        targetArray.push(...newItems.slice(index, index + batchSize));
+        index += batchSize;
+        requestAnimationFrame(addBatch);
+      }
+    };
+
+    addBatch();
+  }
+
+  validateInput(field: 'folderCount' | 'itemCount') {
+    setTimeout(() => {
+      if (this[field] < 1) {
+        this[field] = 1;
+      } else if (this[field] > 5000) {
+        this[field] = 5000;
+      }
+    }, 0);
   }
 
   generateUniqueId(): string {
