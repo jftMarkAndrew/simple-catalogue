@@ -6,7 +6,7 @@
   [cdkDropListData]="folders"
   (cdkDropListDropped)="dropFolder($event)"
 >
-  @for (folder of folders; track folder.key) {
+  @for (folder of folders; track folder.key) { @defer {
   <div class="example-accordion" [style.background]="folder.selector" cdkDrag>
     <div class="folder-custom-placeholder" *cdkDragPlaceholder></div>
     <cdk-accordion-item
@@ -52,7 +52,7 @@
             [class]="folder.items.length > 0 ? 'example-list' : ''"
             (cdkDropListDropped)="dropItem($event, folder)"
           >
-            @for (item of folder.items; track item.id) {
+            @for (item of folder.items; track item.id) { @defer {
             <div class="example-box" cdkDrag [style.background]="item.selector">
               <div class="item-custom-placeholder" *cdkDragPlaceholder></div>
               <button class="gap-icon small-icon" mat-icon-button>
@@ -76,7 +76,7 @@
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
-            }
+            } }
           </div>
         </div>
         <div class="add-folders-or-items add-items">
@@ -88,7 +88,7 @@
             id="itemCount"
             [(ngModel)]="itemCount"
             min="1"
-            max="5000"
+            max="99999"
             (ngModelChange)="validateInput('itemCount')"
             (keyup.enter)="createItems(folder)"
           />
@@ -97,7 +97,7 @@
       </div>
     </cdk-accordion-item>
   </div>
-  }
+  } }
 </div>
 
 <div class="add-folders-or-items">
@@ -109,7 +109,7 @@
     id="folderCount"
     [(ngModel)]="folderCount"
     min="1"
-    max="5000"
+    max="99999"
     (ngModelChange)="validateInput('folderCount')"
     (keyup.enter)="createFolders()"
   />
