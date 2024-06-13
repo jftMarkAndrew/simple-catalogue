@@ -86,7 +86,7 @@
             id="itemCount"
             [(ngModel)]="itemCount"
             min="1"
-            max="999999"
+            max="99999"
             (ngModelChange)="validateInput('itemCount')"
             (keyup.enter)="createItems(folder)"
           />
@@ -107,7 +107,7 @@
     id="folderCount"
     [(ngModel)]="folderCount"
     min="1"
-    max="999999"
+    max="99999"
     (ngModelChange)="validateInput('folderCount')"
     (keyup.enter)="createFolders()"
   />
