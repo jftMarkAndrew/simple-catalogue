@@ -4,6 +4,8 @@ import {
   PLATFORM_ID,
   OnInit,
   OnDestroy,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import {
   CdkDrag,
@@ -41,6 +43,7 @@ import { isPlatformBrowser } from '@angular/common';
   ],
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
@@ -52,7 +55,8 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   constructor(
     private editorService: EditorService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -135,6 +139,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     );
 
     this.addItemsInBatches(newFolders, this.folders);
+    this.cdr.markForCheck();
   }
 
   createItems(folder: FolderData) {
@@ -151,6 +156,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     }));
 
     this.addItemsInBatches(newItems, folder.items);
+    this.cdr.markForCheck();
   }
 
   private addItemsInBatches<T>(newItems: T[], targetArray: T[]) {
