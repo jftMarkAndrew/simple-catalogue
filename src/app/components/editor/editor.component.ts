@@ -1,4 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EditorService } from '../../services/editor.service';
@@ -26,8 +32,9 @@ import { selectors } from '../../consts/selectors';
   ],
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditorComponent implements OnDestroy {
+export class EditorComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
 
   selectedItem$ = this.editorService.selectedItem$;
@@ -41,7 +48,10 @@ export class EditorComponent implements OnDestroy {
   icons = icons;
   selectors = selectors;
 
-  constructor(private editorService: EditorService) {}
+  constructor(
+    private editorService: EditorService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.selectedItem$.pipe(takeUntil(this.unsubscribe$)).subscribe((item) => {
@@ -55,6 +65,7 @@ export class EditorComponent implements OnDestroy {
       } else {
         this.resetFields();
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -70,18 +81,21 @@ export class EditorComponent implements OnDestroy {
     this.selector = '';
     this.chosenIcon = '';
     this.chosenSelector = '';
+    this.cdr.markForCheck();
   }
 
   selectIcon(icon: string) {
     this.icon = icon;
-    this.save();
     this.chosenIcon = icon;
+    this.save();
+    this.cdr.markForCheck();
   }
 
   selectColor(selector: string) {
     this.selector = selector;
-    this.save();
     this.chosenSelector = selector;
+    this.save();
+    this.cdr.markForCheck();
   }
 
   save() {
@@ -91,5 +105,6 @@ export class EditorComponent implements OnDestroy {
       icon: this.icon,
       selector: this.selector,
     });
+    this.cdr.markForCheck();
   }
 }

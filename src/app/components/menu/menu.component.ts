@@ -18,7 +18,13 @@ import {
 import { CdkAccordionModule } from '@angular/cdk/accordion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  FormControl,
+} from '@angular/forms';
 import { MatSliderModule } from '@angular/material/slider';
 import { EditorService } from '../../services/editor.service';
 import { FolderData, Item } from '../../interfaces/FolderData';
@@ -37,7 +43,7 @@ import { isPlatformBrowser } from '@angular/common';
     CdkAccordionModule,
     MatButtonModule,
     MatIconModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatSliderModule,
     ScrollingModule,
   ],
@@ -50,14 +56,33 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   folders: FolderData[] = [];
   shiftPressed = false;
-  folderCount = 50;
-  itemCount = 50;
+  form: FormGroup;
 
   constructor(
+    private fb: FormBuilder,
     private editorService: EditorService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    this.form = this.fb.group({
+      folderCount: [
+        50,
+        [Validators.required, Validators.min(1), Validators.max(5000)],
+      ],
+      itemCount: [
+        50,
+        [Validators.required, Validators.min(1), Validators.max(5000)],
+      ],
+    });
+  }
+
+  get folderCount(): FormControl {
+    return this.form.get('folderCount') as FormControl;
+  }
+
+  get itemCount(): FormControl {
+    return this.form.get('itemCount') as FormControl;
+  }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -72,14 +97,34 @@ export class MenuComponent implements OnInit, OnDestroy {
       );
 
       this.subscriptions.push(
-        keydown$.subscribe((pressed) => (this.shiftPressed = pressed)),
+        keydown$.subscribe((pressed) => {
+          this.shiftPressed = pressed;
+          this.cdr.markForCheck();
+        }),
         keyup$.subscribe(() => {
           setTimeout(() => {
             this.shiftPressed = false;
+            this.cdr.markForCheck();
           }, 500);
         })
       );
+
+      this.folderCount.valueChanges
+        .pipe(map((value) => this.validateAndCorrectInput(this.folderCount)))
+        .subscribe(() => this.cdr.markForCheck());
+
+      this.itemCount.valueChanges
+        .pipe(map((value) => this.validateAndCorrectInput(this.itemCount)))
+        .subscribe(() => this.cdr.markForCheck());
     }
+
+    this.subscriptions.push(
+      this.editorService.selectedItem$.subscribe((selectedItem) => {
+        this.cdr.markForCheck();
+      })
+    );
+
+    this.cdr.detectChanges();
   }
 
   ngOnDestroy() {
@@ -106,6 +151,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         event.currentIndex
       );
     }
+    this.cdr.markForCheck();
   }
 
   dropItem(event: CdkDragDrop<Item[]>, folder: FolderData) {
@@ -118,15 +164,16 @@ export class MenuComponent implements OnInit, OnDestroy {
     } else {
       moveItemInArray(folder.items, event.previousIndex, event.currentIndex);
     }
+    this.cdr.markForCheck();
   }
 
   createFolders() {
-    if (this.folderCount === 0) return;
-    if (this.folderCount < 1) this.folderCount = 1;
-    if (this.folderCount > 5000) this.folderCount = 5000;
+    const folderCount = this.folderCount.value;
+
+    if (folderCount === 0) return;
 
     const newFolders: FolderData[] = Array.from(
-      { length: this.folderCount },
+      { length: folderCount },
       () => ({
         key: this.generateUniqueId(),
         name: 'Folder ' + this.generateUniqueId(),
@@ -143,11 +190,11 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   createItems(folder: FolderData) {
-    if (this.itemCount === 0) return;
-    if (this.itemCount < 1) this.itemCount = 1;
-    if (this.itemCount > 5000) this.itemCount = 5000;
+    const itemCount = this.itemCount.value;
 
-    const newItems: Item[] = Array.from({ length: this.itemCount }, () => ({
+    if (itemCount === 0) return;
+
+    const newItems: Item[] = Array.from({ length: itemCount }, () => ({
       id: this.generateUniqueId(),
       name: 'Item ' + this.generateUniqueId(),
       icon: 'circle',
@@ -172,16 +219,17 @@ export class MenuComponent implements OnInit, OnDestroy {
     };
 
     addBatch();
+    this.cdr.markForCheck();
   }
 
-  validateInput(field: 'folderCount' | 'itemCount') {
-    setTimeout(() => {
-      if (this[field] < 0) {
-        this[field] = 0;
-      } else if (this[field] > 5000) {
-        this[field] = 5000;
-      }
-    }, 0);
+  validateAndCorrectInput(control: FormControl) {
+    const value = control.value;
+    if (value < 0) {
+      control.setValue(0, { emitEvent: false });
+    } else if (value > 5000) {
+      control.setValue(5000, { emitEvent: false });
+    }
+    this.cdr.markForCheck();
   }
 
   generateUniqueId(): string {
@@ -190,6 +238,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   selectItem(type: 'folder' | 'item', data: FolderData | Item) {
     this.editorService.selectItem({ type, data });
+    this.cdr.markForCheck();
   }
 
   deleteItem(
@@ -212,5 +261,6 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.editorService.selectItem(null);
       }
     }
+    this.cdr.markForCheck();
   }
 }
