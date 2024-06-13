@@ -35,6 +35,8 @@ import { isPlatformBrowser } from '@angular/common';
   styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent {
+  private subscriptions: Subscription[] = [];
+
   folders: FolderData[] = [];
   shiftPressed = false;
   folderCount = 50;
@@ -44,8 +46,6 @@ export class MenuComponent {
     private editorService: EditorService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
-
-  private subscriptions: Subscription[] = [];
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {

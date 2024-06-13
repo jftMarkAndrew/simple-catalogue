@@ -58,7 +58,9 @@ export class EditorComponent implements OnDestroy {
     '#F6EEE0',
   ];
 
-  constructor(private editorService: EditorService) {
+  constructor(private editorService: EditorService) {}
+
+  ngOnInit() {
     this.selectedItem$.pipe(takeUntil(this.unsubscribe$)).subscribe((item) => {
       if (item) {
         this.name = item.data.name;
@@ -68,14 +70,23 @@ export class EditorComponent implements OnDestroy {
         this.chosenIcon = item.data.icon;
         this.chosenSelector = item.data.selector;
       } else {
-        this.name = '';
-        this.description = '';
-        this.icon = '';
-        this.selector = '';
-        this.chosenIcon = '';
-        this.chosenSelector = '';
+        this.resetFields();
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
+  resetFields() {
+    this.name = '';
+    this.description = '';
+    this.icon = '';
+    this.selector = '';
+    this.chosenIcon = '';
+    this.chosenSelector = '';
   }
 
   selectIcon(icon: string) {
@@ -97,10 +108,5 @@ export class EditorComponent implements OnDestroy {
       icon: this.icon,
       selector: this.selector,
     });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
 }
