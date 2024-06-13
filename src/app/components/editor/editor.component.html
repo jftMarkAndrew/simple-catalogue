@@ -2,27 +2,21 @@
 <div class="editor">
   <span class="title">Edit {{ selectedItem.type }}</span>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Name</mat-label>
-    <input
-      matInput
-      id="name"
-      [(ngModel)]="name"
-      name="name"
-      (ngModelChange)="save()"
-    />
-  </mat-form-field>
+  <form [formGroup]="form">
+    <mat-form-field appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput id="name" formControlName="name" />
+    </mat-form-field>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Description</mat-label>
-    <textarea
-      matInput
-      id="description"
-      [(ngModel)]="description"
-      name="description"
-      (ngModelChange)="save()"
-    ></textarea>
-  </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        id="description"
+        formControlName="description"
+      ></textarea>
+    </mat-form-field>
+  </form>
 
   <label for="icon" class="title">Icon</label>
   <div class="icon-selector">

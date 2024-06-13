@@ -6,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { EditorService } from '../../services/editor.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { icons } from '../../consts/icons';
 import { selectors } from '../../consts/selectors';
 
@@ -23,7 +23,7 @@ import { selectors } from '../../consts/selectors';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
@@ -38,10 +38,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
 
   selectedItem$ = this.editorService.selectedItem$;
-  name = '';
-  description = '';
-  icon = '';
-  selector = '';
+  form: FormGroup;
   chosenIcon = '';
   chosenSelector = '';
 
@@ -49,17 +46,27 @@ export class EditorComponent implements OnInit, OnDestroy {
   selectors = selectors;
 
   constructor(
+    private fb: FormBuilder,
     private editorService: EditorService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    this.form = this.fb.group({
+      name: [''],
+      description: [''],
+      icon: [''],
+      selector: [''],
+    });
+  }
 
   ngOnInit() {
     this.selectedItem$.pipe(takeUntil(this.unsubscribe$)).subscribe((item) => {
       if (item) {
-        this.name = item.data.name;
-        this.description = item.data.description;
-        this.icon = item.data.icon;
-        this.selector = item.data.selector;
+        this.form.patchValue({
+          name: item.data.name,
+          description: item.data.description,
+          icon: item.data.icon,
+          selector: item.data.selector,
+        });
         this.chosenIcon = item.data.icon;
         this.chosenSelector = item.data.selector;
       } else {
@@ -67,6 +74,16 @@ export class EditorComponent implements OnInit, OnDestroy {
       }
       this.cdr.markForCheck();
     });
+
+    this.form.valueChanges
+      .pipe(
+        debounceTime(250),
+        distinctUntilChanged(),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe(() => {
+        this.save();
+      });
   }
 
   ngOnDestroy() {
@@ -75,36 +92,31 @@ export class EditorComponent implements OnInit, OnDestroy {
   }
 
   resetFields() {
-    this.name = '';
-    this.description = '';
-    this.icon = '';
-    this.selector = '';
+    this.form.reset({
+      name: '',
+      description: '',
+      icon: '',
+      selector: '',
+    });
     this.chosenIcon = '';
     this.chosenSelector = '';
     this.cdr.markForCheck();
   }
 
   selectIcon(icon: string) {
-    this.icon = icon;
+    this.form.get('icon')?.setValue(icon);
     this.chosenIcon = icon;
-    this.save();
     this.cdr.markForCheck();
   }
 
   selectColor(selector: string) {
-    this.selector = selector;
+    this.form.get('selector')?.setValue(selector);
     this.chosenSelector = selector;
-    this.save();
     this.cdr.markForCheck();
   }
 
   save() {
-    this.editorService.updateItem({
-      name: this.name,
-      description: this.description,
-      icon: this.icon,
-      selector: this.selector,
-    });
+    this.editorService.updateItem(this.form.value);
     this.cdr.markForCheck();
   }
 }
