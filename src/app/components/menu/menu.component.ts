@@ -142,6 +142,16 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
+  validateAndCorrectInput(control: FormControl) {
+    const value = control.value;
+    if (value < 0) {
+      control.setValue(0, { emitEvent: false });
+    } else if (value > 5000) {
+      control.setValue(5000, { emitEvent: false });
+    }
+    this.cdr.markForCheck();
+  }
+
   dropFolder(event: CdkDragDrop<FolderData[]>) {
     this.dragAndDropService.dropFolder(event, this.shiftPressed);
   }
@@ -160,16 +170,6 @@ export class MenuComponent implements OnInit, OnDestroy {
     const itemCount = this.itemCount.value;
     if (itemCount === 0) return;
     this.folderService.createItems(folder, itemCount);
-  }
-
-  validateAndCorrectInput(control: FormControl) {
-    const value = control.value;
-    if (value < 0) {
-      control.setValue(0, { emitEvent: false });
-    } else if (value > 5000) {
-      control.setValue(5000, { emitEvent: false });
-    }
-    this.cdr.markForCheck();
   }
 
   selectItem(type: 'folder' | 'item', data: FolderData | Item) {

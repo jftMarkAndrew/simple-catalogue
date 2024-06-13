@@ -9,6 +9,17 @@ export class FolderService {
   private foldersSubject = new BehaviorSubject<FolderData[]>([]);
   folders$ = this.foldersSubject.asObservable();
 
+  private updateFolder(updatedFolder: FolderData) {
+    const folders = this.foldersSubject.value.map((folder) =>
+      folder.key === updatedFolder.key ? updatedFolder : folder
+    );
+    this.foldersSubject.next(folders);
+  }
+
+  private generateUniqueId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+  }
+
   createFolders(folderCount: number) {
     const newFolders: FolderData[] = Array.from(
       { length: folderCount },
@@ -50,16 +61,5 @@ export class FolderService {
   deleteItem(folder: FolderData, item: Item) {
     folder.items = folder.items.filter((i) => i.id !== item.id);
     this.updateFolder(folder);
-  }
-
-  private updateFolder(updatedFolder: FolderData) {
-    const folders = this.foldersSubject.value.map((folder) =>
-      folder.key === updatedFolder.key ? updatedFolder : folder
-    );
-    this.foldersSubject.next(folders);
-  }
-
-  private generateUniqueId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
   }
 }
