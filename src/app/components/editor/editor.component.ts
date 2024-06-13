@@ -9,6 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { icons } from '../../consts/icons';
+import { selectors } from '../../consts/selectors';
 
 @Component({
   selector: 'app-editor',
@@ -36,27 +38,8 @@ export class EditorComponent implements OnDestroy {
   chosenIcon = '';
   chosenSelector = '';
 
-  icons = [
-    'home',
-    'work',
-    'school',
-    'star',
-    'favorite',
-    'circle',
-    'autorenew',
-    'bolt',
-  ];
-
-  selectors = [
-    'white',
-    '#f1f2f7',
-    'lightblue',
-    '#DDFFE7',
-    '#F9F1F0',
-    'lightyellow',
-    '#FADCD9',
-    '#F6EEE0',
-  ];
+  icons = icons;
+  selectors = selectors;
 
   constructor(private editorService: EditorService) {}
 
