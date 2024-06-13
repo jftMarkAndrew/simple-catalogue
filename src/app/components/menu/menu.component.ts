@@ -42,7 +42,7 @@ export class MenuComponent {
 
   constructor(
     private editorService: EditorService,
-    @Inject(PLATFORM_ID) private platformId: any
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   private subscriptions: Subscription[] = [];
@@ -64,7 +64,7 @@ export class MenuComponent {
         keyup$.subscribe(() => {
           setTimeout(() => {
             this.shiftPressed = false;
-          }, 250);
+          }, 500);
         })
       );
     }
