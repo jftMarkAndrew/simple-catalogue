@@ -1,4 +1,4 @@
-<div class="title">Menu</div>
+<div class="title">Menu ({{ folders.length }})</div>
 <div
   cdkDropList
   cdkDropListAutoScroll
@@ -25,7 +25,9 @@
           <button class="gap-icon" mat-icon-button>
             <mat-icon>{{ folder.icon }}</mat-icon>
           </button>
-          <span class="name-folder">{{ folder.name }}</span>
+          <span class="name-folder"
+            >{{ folder.name }} ({{ folder.items.length }})</span
+          >
         </div>
         <button mat-icon-button (click)="selectItem('folder', folder)">
           <mat-icon>edit</mat-icon>
