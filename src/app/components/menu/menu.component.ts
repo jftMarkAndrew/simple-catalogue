@@ -117,8 +117,9 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   createFolders() {
+    if (this.folderCount === 0) return;
     if (this.folderCount < 1) this.folderCount = 1;
-    if (this.folderCount > 5000) this.folderCount = 5000;
+    if (this.folderCount > 99999) this.folderCount = 99999;
 
     const newFolders: FolderData[] = Array.from(
       { length: this.folderCount },
@@ -137,8 +138,9 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   createItems(folder: FolderData) {
+    if (this.itemCount === 0) return;
     if (this.itemCount < 1) this.itemCount = 1;
-    if (this.itemCount > 5000) this.itemCount = 5000;
+    if (this.itemCount > 99999) this.itemCount = 99999;
 
     const newItems: Item[] = Array.from({ length: this.itemCount }, () => ({
       id: this.generateUniqueId(),
@@ -168,10 +170,10 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   validateInput(field: 'folderCount' | 'itemCount') {
     setTimeout(() => {
-      if (this[field] < 1) {
-        this[field] = 1;
-      } else if (this[field] > 5000) {
-        this[field] = 5000;
+      if (this[field] < 0) {
+        this[field] = 0;
+      } else if (this[field] > 99999) {
+        this[field] = 99999;
       }
     }, 0);
   }
