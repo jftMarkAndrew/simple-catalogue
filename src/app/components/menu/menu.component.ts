@@ -31,6 +31,8 @@ import { FolderData, Item } from '../../interfaces/FolderData';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { Subscription, filter, fromEvent, map } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { FolderService } from '../../services/folder.service';
+import { DragAndDropService } from '../../services/drag-and-drop.service';
 
 @Component({
   selector: 'app-menu',
@@ -61,6 +63,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private editorService: EditorService,
+    private folderService: FolderService,
+    private dragAndDropService: DragAndDropService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef
   ) {
@@ -119,7 +123,14 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
 
     this.subscriptions.push(
-      this.editorService.selectedItem$.subscribe((selectedItem) => {
+      this.folderService.folders$.subscribe((folders) => {
+        this.folders = folders;
+        this.cdr.markForCheck();
+      })
+    );
+
+    this.subscriptions.push(
+      this.editorService.selectedItem$.subscribe(() => {
         this.cdr.markForCheck();
       })
     );
@@ -132,94 +143,23 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   dropFolder(event: CdkDragDrop<FolderData[]>) {
-    if (this.shiftPressed) {
-      const copiedFolder = {
-        ...event.previousContainer.data[event.previousIndex],
-        key: this.generateUniqueId(),
-        items: event.previousContainer.data[event.previousIndex].items.map(
-          (item) => ({
-            ...item,
-            id: this.generateUniqueId(),
-          })
-        ),
-      };
-      event.container.data.splice(event.currentIndex, 0, copiedFolder);
-    } else {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    }
-    this.cdr.markForCheck();
+    this.dragAndDropService.dropFolder(event, this.shiftPressed);
   }
 
   dropItem(event: CdkDragDrop<Item[]>, folder: FolderData) {
-    if (this.shiftPressed) {
-      const copiedItem = {
-        ...event.previousContainer.data[event.previousIndex],
-        id: this.generateUniqueId(),
-      };
-      folder.items.splice(event.currentIndex, 0, copiedItem);
-    } else {
-      moveItemInArray(folder.items, event.previousIndex, event.currentIndex);
-    }
-    this.cdr.markForCheck();
+    this.dragAndDropService.dropItem(event, folder, this.shiftPressed);
   }
 
   createFolders() {
     const folderCount = this.folderCount.value;
-
     if (folderCount === 0) return;
-
-    const newFolders: FolderData[] = Array.from(
-      { length: folderCount },
-      () => ({
-        key: this.generateUniqueId(),
-        name: 'Folder ' + this.generateUniqueId(),
-        icon: 'home',
-        selector: '#f1f2f7',
-        cost: 0,
-        description: '',
-        items: [],
-      })
-    );
-
-    this.addItemsInBatches(newFolders, this.folders);
-    this.cdr.markForCheck();
+    this.folderService.createFolders(folderCount);
   }
 
   createItems(folder: FolderData) {
     const itemCount = this.itemCount.value;
-
     if (itemCount === 0) return;
-
-    const newItems: Item[] = Array.from({ length: itemCount }, () => ({
-      id: this.generateUniqueId(),
-      name: 'Item ' + this.generateUniqueId(),
-      icon: 'circle',
-      selector: 'white',
-      description: '',
-    }));
-
-    this.addItemsInBatches(newItems, folder.items);
-    this.cdr.markForCheck();
-  }
-
-  private addItemsInBatches<T>(newItems: T[], targetArray: T[]) {
-    const batchSize = 250;
-    let index = 0;
-
-    const addBatch = () => {
-      if (index < newItems.length) {
-        targetArray.push(...newItems.slice(index, index + batchSize));
-        index += batchSize;
-        requestAnimationFrame(addBatch);
-      }
-    };
-
-    addBatch();
-    this.cdr.markForCheck();
+    this.folderService.createItems(folder, itemCount);
   }
 
   validateAndCorrectInput(control: FormControl) {
@@ -230,10 +170,6 @@ export class MenuComponent implements OnInit, OnDestroy {
       control.setValue(5000, { emitEvent: false });
     }
     this.cdr.markForCheck();
-  }
-
-  generateUniqueId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
   }
 
   selectItem(type: 'folder' | 'item', data: FolderData | Item) {
@@ -247,19 +183,9 @@ export class MenuComponent implements OnInit, OnDestroy {
     parentFolder?: FolderData
   ) {
     if (type === 'folder') {
-      this.folders = this.folders.filter(
-        (folder) => folder.key !== (item as FolderData).key
-      );
-      if (this.editorService.getSelectedItem()?.data === item) {
-        this.editorService.selectItem(null);
-      }
+      this.folderService.deleteFolder(item as FolderData);
     } else if (type === 'item' && parentFolder) {
-      parentFolder.items = parentFolder.items.filter(
-        (i) => i.id !== (item as Item).id
-      );
-      if (this.editorService.getSelectedItem()?.data === item) {
-        this.editorService.selectItem(null);
-      }
+      this.folderService.deleteItem(parentFolder, item as Item);
     }
     this.cdr.markForCheck();
   }
