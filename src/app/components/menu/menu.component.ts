@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import {
   CdkDrag,
   CdkDragDrop,
@@ -14,6 +14,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { EditorService } from '../../services/editor.service';
 import { FolderData, Item } from '../../interfaces/FolderData';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { Subscription, filter, fromEvent, map } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-menu',
@@ -38,20 +40,38 @@ export class MenuComponent {
   folderCount = 50;
   itemCount = 50;
 
-  constructor(private editorService: EditorService) {}
+  constructor(
+    private editorService: EditorService,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) {}
 
-  @HostListener('window:keydown', ['$event'])
-  handleKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Shift') {
-      this.shiftPressed = true;
+  private subscriptions: Subscription[] = [];
+
+  ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      const keydown$ = fromEvent<KeyboardEvent>(window, 'keydown').pipe(
+        filter((event) => event.key === 'Shift'),
+        map(() => true)
+      );
+
+      const keyup$ = fromEvent<KeyboardEvent>(window, 'keyup').pipe(
+        filter((event) => event.key === 'Shift'),
+        map(() => false)
+      );
+
+      this.subscriptions.push(
+        keydown$.subscribe((pressed) => (this.shiftPressed = pressed)),
+        keyup$.subscribe(() => {
+          setTimeout(() => {
+            this.shiftPressed = false;
+          }, 250);
+        })
+      );
     }
   }
 
-  @HostListener('window:keyup', ['$event'])
-  handleKeyUp(event: KeyboardEvent) {
-    if (event.key === 'Shift') {
-      this.shiftPressed = false;
-    }
+  ngOnDestroy() {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   dropFolder(event: CdkDragDrop<FolderData[]>) {
